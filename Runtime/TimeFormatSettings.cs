@@ -5,7 +5,7 @@
     using UnityEngine.Localization;
 
     [Serializable]
-    [CreateAssetMenu(menuName = "Taktika/Settings/Time Format Settings", fileName = nameof(TimeFormatSettings))]
+    [CreateAssetMenu(menuName = "UniGame/Settings/Time Format Settings", fileName = nameof(TimeFormatSettings))]
     public class TimeFormatSettings : ScriptableObject
     {
         public LocalizedString Seconds;
