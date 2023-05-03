@@ -13,6 +13,7 @@ using UnityEngine.Localization.Tables;
 
 namespace UniGame.Localization.Runtime.UniModules.UniGame.Localization.Runtime
 {
+
     public static class LocalizationExtensions
     {
         public static LocalizedString ToLocalizedString(this string key)
@@ -53,11 +54,6 @@ namespace UniGame.Localization.Runtime.UniModules.UniGame.Localization.Runtime
             return BindTo(source,handler,frameThrottle);          
         }
 
-        public static IDisposable BindTo(this LocalizedString source, TextMeshProUGUI text, int frameThrottle = 1)
-        {
-            return source.BindTo(x => text.SetValue(x),frameThrottle);
-        }
-        
         public static IDisposable BindTo(this LocalizedString source, Action<string> text, int frameThrottle = 1)
         {
             var result = Observable
@@ -85,7 +81,6 @@ namespace UniGame.Localization.Runtime.UniModules.UniGame.Localization.Runtime
 
             var result = source
                 .AsObservable()
-                .Do(x =>  Debug.Log($"LOCALIZATION DATA {x} STATE {UniApplication.PlayModeState}"))
                 .BatchPlayerTiming(frameThrottle,PlayerLoopTiming.LastPostLateUpdate)
                 .Subscribe(action);
 
