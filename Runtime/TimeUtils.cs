@@ -81,7 +81,9 @@
             }
 
             var firstValIndex = units.FindIndex(u => u != 0);
-            units = firstValIndex == -1 ? Enumerable.Repeat(0, tokens).ToList() : units.GetRange(Math.Min(firstValIndex, units.Count - tokens), tokens);
+            units = firstValIndex == -1 
+                ? Enumerable.Repeat(0, tokens).ToList() 
+                : units.GetRange(Math.Min(firstValIndex, units.Count - tokens), tokens);
             
             return tokens switch
             {
