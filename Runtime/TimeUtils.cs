@@ -43,6 +43,11 @@
             return (long)(DateTime.UtcNow - StartTime).TotalMilliseconds;
         }
 
+        public static long GetUnixTimeNow()
+        {
+            return (long)(DateTime.UtcNow - StartTime).TotalSeconds;
+        }
+        
         public static long UtcToEst(long utcMs)
         {
             var utc = StartTime.AddMilliseconds(utcMs);
