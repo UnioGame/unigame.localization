@@ -1,6 +1,6 @@
 {
     "name": "unigame.localization.runtime",
-    "rootNamespace": "UniGame.Localization.Runtime",
+    "rootNamespace": "",
     "references": [
         "GUID:8e4577c9194c10845984cf27eb974fd1",
         "GUID:079cabb64c86ebd47b8aa2e544990201",
