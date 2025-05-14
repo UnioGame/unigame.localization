@@ -41,35 +41,35 @@ namespace UniGame.Localization.Runtime.UniModules.UniGame.Localization.Runtime
         
         public static IDisposable BindChangeHandler(this LocalizedString source, IObserver<string> handler,int frameThrottle = 1)
         {
-            return BindTo(source,x => handler?.OnNext(x),frameThrottle);          
+            return Bind(source,x => handler?.OnNext(x),frameThrottle);          
         }
   
         public static IDisposable BindChangeHandler(this LocalizedString source, Action<string> handler,int frameThrottle = 1)
         {
-            return BindTo(source,handler,frameThrottle);          
+            return Bind(source,handler,frameThrottle);          
         }
 
-        public static IDisposable BindTo(this LocalizedString source, Action<string> text, int frameThrottle = 1)
+        public static IDisposable Bind(this LocalizedString source, Action<string> text, int frameThrottle = 1)
         {
             var result = Observable
-                .Create<string>(x => BindTo(source, x, frameThrottle),true)
+                .Create<string>(x => Bind(source, x, frameThrottle),true)
                 .Do(x => text?.Invoke(x))
                 .Subscribe();
             
             return result;
         }
         
-        public static IDisposable BindTo(this LocalizedString source, IReactiveProperty<string> text, int frameThrottle = 1)
+        public static IDisposable Bind(this LocalizedString source, IReactiveProperty<string> text, int frameThrottle = 1)
         {
             var result = Observable
-                .Create<string>(x => BindTo(source, x, frameThrottle),true)
+                .Create<string>(x => Bind(source, x, frameThrottle),true)
                 .Do(x => text.Value = x)
                 .Subscribe();
             
             return result;
         }
         
-        public static IDisposable BindTo(this LocalizedString source, IObserver<string> action,int frameThrottle = 1)
+        public static IDisposable Bind(this LocalizedString source, IObserver<string> action,int frameThrottle = 1)
         {
             if(source == null || action == null)
                 return Disposable.Empty;
