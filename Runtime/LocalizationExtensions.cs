@@ -8,6 +8,7 @@ using UnityEngine.Localization.Tables;
 
 namespace UniGame.Localization.Runtime.UniModules.UniGame.Localization.Runtime
 {
+    using UnityEngine;
 
     public static class LocalizationExtensions
     {
@@ -88,6 +89,13 @@ namespace UniGame.Localization.Runtime.UniModules.UniGame.Localization.Runtime
         {
             return Observable.FromEvent<string>(y  => localizedString.StringChanged += y.Invoke,
                 y => localizedString.StringChanged -= y.Invoke);
+        }
+        
+        public static IObservable<TAsset> AsObservable<TAsset>(this LocalizedAsset<TAsset> localizedAsset) 
+            where TAsset : Object
+        {
+            return Observable.FromEvent<TAsset>(y  => localizedAsset.AssetChanged += y.Invoke,
+                y => localizedAsset.AssetChanged -= y.Invoke);
         }
 
     }
