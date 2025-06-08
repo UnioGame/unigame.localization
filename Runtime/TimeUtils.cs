@@ -2,12 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Text.RegularExpressions;
     using UniGame.Utils.Runtime;
-    using UniCore.Runtime.ProfilerTools;
+    using UnityEngine;
     using UnityEngine.Localization.SmartFormat.Utilities;
-    using UnityEngine.Pool;
 
     public static class TimeUtils
     {
@@ -95,7 +93,7 @@
             var tokens = _tokenRegex.Matches(format).Count;
             if (tokens > _units.Count)
             {
-                GameLog.LogError($"Input string requires more parameters. Format: {format}, submitted parameters count: {_units.Count}");
+                Debug.LogError($"Input string requires more parameters. Format: {format}, submitted parameters count: {_units.Count}");
                 return timeSpan.ToString(@"hh\:mm\:ss");
             }
 

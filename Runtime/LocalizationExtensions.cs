@@ -1,13 +1,14 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
-using UniModules.UniGame.Rx.Runtime.Extensions;
-using UniRx;
+using UniGame.Runtime.Rx.Runtime.Extensions;
+ 
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 
-namespace UniGame.Localization.Runtime.UniModules.UniGame.Localization.Runtime
+namespace UniGame.Localization.Runtime
 {
+    using R3;
     using UnityEngine;
 
     public static class LocalizationExtensions
@@ -60,7 +61,7 @@ namespace UniGame.Localization.Runtime.UniModules.UniGame.Localization.Runtime
             return result;
         }
         
-        public static IDisposable Bind(this LocalizedString source, IReactiveProperty<string> text, int frameThrottle = 1)
+        public static IDisposable Bind(this LocalizedString source, ReactiveProperty<string> text, int frameThrottle = 1)
         {
             var result = Observable
                 .Create<string>(x => Bind(source, x, frameThrottle),true)
@@ -72,12 +73,17 @@ namespace UniGame.Localization.Runtime.UniModules.UniGame.Localization.Runtime
         
         public static IDisposable Bind(this LocalizedString source, IObserver<string> action,int frameThrottle = 1)
         {
+            return Bind(source,action.ToObserver(),frameThrottle);       
+        }
+        
+        public static IDisposable Bind(this LocalizedString source, Observer<string> action,int frameThrottle = 1)
+        {
             if(source == null || action == null)
                 return Disposable.Empty;
 
             var result = source
                 .AsObservable()
-                .BatchPlayerTiming(frameThrottle,PlayerLoopTiming.LastPostLateUpdate)
+                .DelayFrame(frameThrottle)
                 .Subscribe(action);
 
             source.RefreshString();
@@ -85,13 +91,13 @@ namespace UniGame.Localization.Runtime.UniModules.UniGame.Localization.Runtime
             return result;          
         }
 
-        public static IObservable<string> AsObservable(this LocalizedString localizedString)
+        public static Observable<string> AsObservable(this LocalizedString localizedString)
         {
             return Observable.FromEvent<string>(y  => localizedString.StringChanged += y.Invoke,
                 y => localizedString.StringChanged -= y.Invoke);
         }
         
-        public static IObservable<TAsset> AsObservable<TAsset>(this LocalizedAsset<TAsset> localizedAsset) 
+        public static Observable<TAsset> AsObservable<TAsset>(this LocalizedAsset<TAsset> localizedAsset) 
             where TAsset : Object
         {
             return Observable.FromEvent<TAsset>(y  => localizedAsset.AssetChanged += y.Invoke,
