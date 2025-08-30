@@ -1,18 +1,51 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
-using UniGame.Runtime.Rx.Runtime.Extensions;
- 
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 
 namespace UniGame.Localization.Runtime
 {
+    using System.Threading;
+    using Core.Runtime;
     using R3;
+    using TMPro;
     using UnityEngine;
 
     public static class LocalizationExtensions
     {
+        public static void SetValue(
+            this TextMeshProUGUI value,
+            LocalizedString localizedString, 
+            ILifeTime lifeTime)
+        {
+            if(value == null) return;
+            if(localizedString == null) return;
+            
+            localizedString.AsObservable()
+                .Subscribe(value, (x, y) => y.text = x)
+                .AddTo(lifeTime);
+        }
+        
+        public static async UniTask<string> SetValueAsync(
+            this TextMeshProUGUI value,
+            LocalizedString localizedString, 
+            CancellationToken token = default)
+        {
+            if (value == null) return string.Empty;
+            
+            var stringTask = localizedString
+                .GetLocalizedStringAsync();
+            
+            await stringTask.ToUniTask(cancellationToken: token);
+            var stringValue = stringTask.Result;
+            
+            if (value == null) return string.Empty;
+            value.text = stringValue;
+            
+            return stringValue;
+        }
+        
         public static LocalizedString ToLocalizedString(this string key)
         {
             var splittedKey = key.Split('/');
@@ -41,18 +74,15 @@ namespace UniGame.Localization.Runtime
             return result;
         }
         
-        public static IDisposable BindChangeHandler(this LocalizedString source, IObserver<string> handler,int frameThrottle = 1)
+        public static IDisposable Subscribe(this LocalizedString source, IObserver<string> handler,int frameThrottle = 1)
         {
-            return Bind(source,x => handler?.OnNext(x),frameThrottle);          
-        }
-  
-        public static IDisposable BindChangeHandler(this LocalizedString source, Action<string> handler,int frameThrottle = 1)
-        {
-            return Bind(source,handler,frameThrottle);          
+            return Subscribe(source,x => handler?.OnNext(x),frameThrottle);          
         }
 
-        public static IDisposable Bind(this LocalizedString source, Action<string> text, int frameThrottle = 1)
+        public static IDisposable Subscribe(this LocalizedString source, Action<string> text, int frameThrottle = 1)
         {
+            if (source == null || text == null) return Disposable.Empty;
+            
             var result = Observable
                 .Create<string>(x => Bind(source, x, frameThrottle),true)
                 .Do(x => text?.Invoke(x))
@@ -60,9 +90,25 @@ namespace UniGame.Localization.Runtime
             
             return result;
         }
+
+        
+        public static IDisposable Bind(this LocalizedString source, Action<string> text, int frameThrottle = 1)
+        {
+            if (source == null || text == null) return Disposable.Empty;
+            
+            var result = Observable
+                .Create<string>(x => Bind(source, x, frameThrottle),true)
+                .Do(text.Invoke)
+                .Subscribe();
+            
+            return result;
+        }
+
         
         public static IDisposable Bind(this LocalizedString source, ReactiveProperty<string> text, int frameThrottle = 1)
         {
+            if (text == null) return Disposable.Empty;
+            
             var result = Observable
                 .Create<string>(x => Bind(source, x, frameThrottle),true)
                 .Do(x => text.Value = x)
