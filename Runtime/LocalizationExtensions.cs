@@ -14,8 +14,7 @@ namespace UniGame.Localization.Runtime
 
     public static class LocalizationExtensions
     {
-        public static void SetValue(
-            this TextMeshProUGUI value,
+        public static void SetValue(this TextMeshProUGUI value,
             LocalizedString localizedString, 
             ILifeTime lifeTime)
         {
@@ -92,12 +91,12 @@ namespace UniGame.Localization.Runtime
         }
 
         
-        public static IDisposable Bind(this LocalizedString source, Action<string> text, int frameThrottle = 1)
+        public static IDisposable Bind(this LocalizedString source, Action<string> text)
         {
             if (source == null || text == null) return Disposable.Empty;
             
             var result = Observable
-                .Create<string>(x => Bind(source, x, frameThrottle),true)
+                .Create<string,LocalizedString>(source,static (x,y) => Bind(y, x),true)
                 .Do(text.Invoke)
                 .Subscribe();
             
@@ -105,12 +104,12 @@ namespace UniGame.Localization.Runtime
         }
 
         
-        public static IDisposable Bind(this LocalizedString source, ReactiveProperty<string> text, int frameThrottle = 1)
+        public static IDisposable Bind(this LocalizedString source, ReactiveProperty<string> text)
         {
             if (text == null) return Disposable.Empty;
             
             var result = Observable
-                .Create<string>(x => Bind(source, x, frameThrottle),true)
+                .Create<string,LocalizedString>(source,static (x,y) => Bind(y, x),true)
                 .Do(x => text.Value = x)
                 .Subscribe();
             
