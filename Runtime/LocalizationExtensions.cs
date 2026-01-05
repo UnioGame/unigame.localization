@@ -26,6 +26,15 @@ namespace UniGame.Localization.Runtime
                 .AddTo(lifeTime);
         }
         
+        public static IDisposable SetValue(this TextMeshProUGUI value, LocalizedString localizedString)
+        {
+            if(value == null || localizedString == null) return Disposable.Empty;
+
+            return localizedString
+                .AsObservable()
+                .Subscribe(value, (x, y) => y.text = x);
+        }
+        
         public static async UniTask<string> SetValueAsync(
             this TextMeshProUGUI value,
             LocalizedString localizedString, 
