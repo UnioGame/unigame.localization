@@ -13,10 +13,16 @@
         private const string TimerFormat3 = "{0}:{1}:{2}";
         private const string TimerFormat2 = "{0}:{1}";
         private const string TimerFormat1 = "{0}";
+        public const string NumericHhMmSs = "{0:00}:{1:00}:{2:00}";
         
         public const TimeSpanFormatOptions DefaultOptions = TimeSpanFormatOptions.Abbreviate|TimeSpanFormatOptions.LessThanOff|
                                                             TimeSpanFormatOptions.TruncateFill|TimeSpanFormatOptions.RangeSeconds|
                                                             TimeSpanFormatOptions.RangeHours;
+        
+        public const TimeSpanFormatOptions Numeric = TimeSpanFormatOptions.LessThanOff|
+                    TimeSpanFormatOptions.RangeMinutes|TimeSpanFormatOptions.RangeSeconds|
+                    TimeSpanFormatOptions.RangeHours;
+        
         public const TimeSpanFormatOptions DefaultOptionsWithoutSeconds = TimeSpanFormatOptions.Abbreviate|
                                                                           TimeSpanFormatOptions.LessThanOff|TimeSpanFormatOptions.TruncateFill|
                                                                           TimeSpanFormatOptions.RangeMinutes|TimeSpanFormatOptions.RangeHours;
@@ -72,6 +78,12 @@
         public static DateTime EstDateTimeFromMilliseconds(long ms)
         {
             return EstStartTime.AddMilliseconds(ms);
+        }
+        
+        public static string Format(TimeSpan time,TimeTextInfo localization, TimeSpanFormatOptions options = DefaultOptions)
+        {
+            var str = time.ToTimeString(options,localization);
+            return str;
         }
 
         public static string Format(TimeSpan time, TimeSpanFormatOptions options = DefaultOptions)
